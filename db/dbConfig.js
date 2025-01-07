@@ -9,6 +9,7 @@ const pool = new Pool({
   },
 });
 
+// Function to connect to the database and test the connection
 async function connectToDatabase() {
   try {
     // Connect to the database
@@ -24,6 +25,19 @@ async function connectToDatabase() {
     console.error('Error connecting to the database:', err);
   }
 }
+
+// Ensure the pool is closed only when the application exits
+process.on('SIGINT', async () => {
+  console.log('Closing database pool...');
+  try {
+    await pool.end();
+    console.log('Database pool closed.');
+  } catch (err) {
+    console.error('Error closing database pool:', err);
+  } finally {
+    process.exit(0);
+  }
+});
 connectToDatabase();
 
 module.exports = pool;
